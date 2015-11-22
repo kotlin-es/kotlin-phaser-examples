@@ -3,7 +3,7 @@ package Phaser
 import org.w3c.dom.events.Event
 import kotlin.reflect.KClass
 
-@native("Phaser.Game") class Game(val width: Int, val height: Int, val auto: String, id: String) {
+@native("Phaser.Game") class Game(val width: Double, val height: Double, val auto: String, id: String) {
 	@native val state: PhaserState = noImpl
 	@native val load: Loader = noImpl
 	@native val add: PhaserGameObjectFactory = noImpl
@@ -103,6 +103,7 @@ open class GameState(game: Phaser.Game) {
 	@native val world: World = noImpl
 	@native fun sprite(x: Number, y: Number, key: AssertName): Sprite = noImpl
 	@native fun text(x: Number, y: Number, text: String): Text
+	@native fun text(x: Number, y: Number, text: String, style: TextStyle): Text
 
 }
 
@@ -111,12 +112,70 @@ open class GameState(game: Phaser.Game) {
 	@native fun set(x: Number, y: Number): Unit = noImpl
 }
 
-@native("Phaser.Text") class Text(game: Game, x: Double, y: Double, text: String, style: Any) {
+@native interface TextStyle {
+	var font: String
+	var fontStyle: String
+	var fontVariant: String
+	var fontWeight: Int
+	var fontSize: String
+	var backgroundColor: String
+	var fill: String
+	var align: String
+	var boundsAlignH: String
+	var boundsAlignV: String
+	var stroke: String
+	var strokeThickness: Number
+	var wordWrap: Boolean
+	var wordWrapWidth: Int
+	var tabs: Int
+}
+
+fun TextStyle(
+	font: String? = null, // "bold 20pt Arial"
+	fontStyle: String? = null, // (from font)
+	fontVariant: String? = null, // (from font)
+	fontWeight: Int? = null, // (from font)
+	fontSize: String? = null, // (from font)
+	backgroundColor: String? = null,
+	fill: String? = null, // 'black'
+	align: String? = null, // 'left'
+	boundsAlignH: String? = null, //
+	boundsAlignV: String? = null, //
+	stroke: String? = null, // 'black'
+	strokeThickness: Number? = null, // 0
+	wordWrap: Boolean? = null, // false
+	wordWrapWidth: Int? = null, // 100
+	tabs: Int? = null // 0
+): TextStyle {
+	var out = js("({})")
+	if (font != null) out.font = font
+	if (fontStyle != null) out.fontStyle = fontStyle
+	if (fontVariant != null) out.fontVariant = fontVariant
+	if (fontWeight != null) out.fontWeight = fontWeight
+	if (fontSize != null) out.fontSize = fontSize
+	if (backgroundColor != null) out.backgroundColor = backgroundColor
+	if (fill != null) out.fill = fill
+	if (align != null) out.align = align
+	if (boundsAlignH != null) out.boundsAlignH = boundsAlignH
+	if (boundsAlignV != null) out.boundsAlignV = boundsAlignV
+	if (stroke != null) out.stroke = stroke
+	if (strokeThickness != null) out.strokeThickness = strokeThickness
+	if (wordWrap != null) out.wordWrap = wordWrap
+	if (wordWrapWidth != null) out.wordWrapWidth = wordWrapWidth
+	if (tabs != null) out.tabs = tabs
+	return out
+}
+
+@native("Phaser.Text") class Text(@native val game: Game, x: Double, y: Double, text: String, style: TextStyle? = null) {
 
 }
 
 
-@native interface Sprite {
+@native("Phaser.Sprite") class Sprite(@native val game: Game) {
+	@native var key: Any?
+	@native var frame: Any?
+	@native var x: Double
+	@native var y: Double
 	@native var angle: Double
 	@native var position: Point
 	@native var anchor: Point
@@ -126,7 +185,15 @@ open class GameState(game: Phaser.Game) {
 fun Loader.image(assert: Assert) = this.image(assert.name, assert.url)
 fun Loader.image(vararg asserts: Assert) = asserts.forEach { this.image(it.name, it.url) }
 
-@native val Sprite.body: Physics.Body get() = noImpl
+@native("body") val Sprite.body: Physics.Arcade.Body get() = noImpl
+@native("body") val Sprite.arcadeBody: Physics.Arcade.Body get() = noImpl
+
+interface DirectionObj {
+	var up: Boolean
+	var down: Boolean
+	var left: Boolean
+	var right: Boolean
+}
 
 @native("Phaser.Physics") class Physics {
 	@native enum class Type
@@ -139,15 +206,80 @@ fun Loader.image(vararg asserts: Assert) = asserts.forEach { this.image(it.name,
 	@native fun startSystem(type: Type)
 	@native fun enable(sprite: Sprite, type: Type)
 
-	@native interface Body {
-		var drag: Point
-		var maxVelocity: Point
-		var angularVelocity: Double
-		var acceleration: Point
-	}
-
-	@native class Arcade {
+	@native("Phaser.Physics.Arcade") class Arcade {
 		@native fun accelerationFromRotation(rotation: Double, acceleration: Double, vector: Point)
+
+		@native("Phaser.Physics.Arcade.Body") class Body(@native val sprite: Sprite) {
+			@native var acceleration: Point = noImpl
+			@native var allowGravity: Boolean = noImpl
+			@native var allowRotation: Boolean = noImpl
+			@native var angle: Double = noImpl
+			@native var angularAcceleration: Double = noImpl
+			@native var angularDrag: Double = noImpl
+			@native var angularVelocity: Double = noImpl
+			@native var blocked: DirectionObj = noImpl
+			@native var bottom: Double = noImpl
+			@native var bounce: Point = noImpl
+			@native var center: Point = noImpl
+			@native var checkCollision: DirectionObj = noImpl
+			@native var collideWorldBounds: Boolean = noImpl
+			@native var customSeparateX: Boolean = noImpl
+			@native var customSeparateY: Boolean = noImpl
+			@native var deltaMax: Point = noImpl
+			@native var dirty: Boolean = noImpl
+			@native var drag: Point = noImpl
+			@native var embedded: Boolean = noImpl
+			@native var enable: Boolean = noImpl
+			@native var facing: Double = noImpl
+			@native var friction: Point = noImpl
+			@native val game: Game = noImpl
+			@native var gravity: Point = noImpl
+			@native val halfHeight: Double = noImpl
+			@native val halfWidth: Double = noImpl
+			@native val height: Double = noImpl
+			@native var immovable: Boolean = noImpl
+			@native var mass: Double = noImpl
+			@native var maxAngular: Double = noImpl
+			@native var maxVelocity: Point = noImpl
+			@native var moves: Boolean = noImpl
+			@native val newVelocity: Point = noImpl
+			@native var offset: Point = noImpl
+			@native var overlapX: Point = noImpl
+			@native var overlapY: Point = noImpl
+			@native val position: Point = noImpl
+			@native val preRotation: Double = noImpl
+			@native val prev: Point = noImpl
+			@native val right: Double = noImpl
+			@native var rotation: Double = noImpl
+			@native var skipQuadTree: Boolean = noImpl
+			@native val sourceHeight: Double = noImpl
+			@native val sourceWidth: Double = noImpl
+			@native val speed: Double = noImpl
+			@native var syncBounds: Boolean = noImpl
+			@native var tilePadding: Point = noImpl
+			@native var touching: DirectionObj = noImpl
+			@native var type: Int = noImpl
+			@native var velocity: Point = noImpl
+			@native var wasTouching: DirectionObj = noImpl
+			@native val width: Double = noImpl
+			@native var x: Double = noImpl
+			@native var y: Double = noImpl
+
+			@native fun deltaAbsX(): Double = noImpl
+			@native fun deltaAbsY(): Double = noImpl
+			@native fun deltaX(): Double = noImpl
+			@native fun deltaY(): Double = noImpl
+			@native fun deltaZ(): Double = noImpl
+			@native fun destroy(): Unit = noImpl
+			@native fun hitTest(x: Number, y: Number): Boolean = noImpl
+			@native fun onFloor(): Boolean = noImpl
+			@native fun onWall(): Boolean = noImpl
+			@native fun render(context: Any, body: Body, color: String, filled: Boolean): Unit = noImpl
+			@native fun renderBodyInfo(body: Body, x: Number, y: Number, color: String): Unit = noImpl
+			@native fun reset(x: Number, y: Number): Unit = noImpl
+			@native fun setSize(width: Number, height: Number): Unit = noImpl
+			@native fun setSize(width: Number, height: Number, offsetX: Number, offsetY: Number): Unit = noImpl
+		}
 	}
 }
 

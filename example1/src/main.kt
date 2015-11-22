@@ -15,8 +15,8 @@ object GameStates {
 }
 
 object gameProperties {
-	val screenWidth = 640
-	val screenHeight = 480
+	val screenWidth = 640.0
+	val screenHeight = 480.0
 }
 
 object Assets {
@@ -51,7 +51,10 @@ class MyGameState(val game: Phaser.Game) : GameState(game) {
 	override fun create() {
 		println("create")
 
-		game.add.text(10, 10, "Hello World!")
+		game.add.text(10, 10, "Hello World!", TextStyle(
+			font = "40px Arial",
+			fill = "red"
+		))
 
 		shipSprite = game.add.sprite(
 			shipProperties.startX,
@@ -88,5 +91,14 @@ class MyGameState(val game: Phaser.Game) : GameState(game) {
 		} else {
 			this.shipSprite.body.acceleration.set(0)
 		}
+
+		checkBoundaries(this.shipSprite)
+	}
+
+	private fun checkBoundaries(sprite: Sprite) {
+		if (sprite.x < 0) sprite.x += game.width
+		if (sprite.x > game.width) sprite.x -= game.width
+		if (sprite.y < 0) sprite.y += game.height
+		if (sprite.y > game.height) sprite.y -= game.height
 	}
 }
