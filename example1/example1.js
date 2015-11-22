@@ -2,18 +2,18 @@
   'use strict';
   var _ = Kotlin.defineRootPackage(function () {
     this.GameStates = Kotlin.createObject(null, function () {
-      this.GAME = _.GameStateType_61zpoe$('game');
+      this.GAME = _.Phaser.GameStateType_61zpoe$('game');
     });
     this.gameProperties = Kotlin.createObject(null, function () {
       this.screenWidth = 640;
       this.screenHeight = 480;
     });
     this.Assets = Kotlin.createObject(null, function () {
-      this.ship = _.Assert_puj7f4$('ship', 'assets/ship.png');
-      this.bullet = _.Assert_puj7f4$('bullet', 'assets/bullet.png');
-      this.asteroidLarge = _.Assert_puj7f4$('asteroidLarge', 'assets/asteroidLarge.png');
-      this.asteroidMedium = _.Assert_puj7f4$('asteroidMedium', 'assets/asteroidMedium.png');
-      this.asteroidSmall = _.Assert_puj7f4$('asteroidSmall', 'assets/asteroidSmall.png');
+      this.ship = _.Phaser.Assert_puj7f4$('ship', 'assets/ship.png');
+      this.bullet = _.Phaser.Assert_puj7f4$('bullet', 'assets/bullet.png');
+      this.asteroidLarge = _.Phaser.Assert_puj7f4$('asteroidLarge', 'assets/asteroidLarge.png');
+      this.asteroidMedium = _.Phaser.Assert_puj7f4$('asteroidMedium', 'assets/asteroidMedium.png');
+      this.asteroidSmall = _.Phaser.Assert_puj7f4$('asteroidSmall', 'assets/asteroidSmall.png');
     });
     this.shipProperties = Kotlin.createObject(null, function () {
       this.startX = _.gameProperties.screenWidth * 0.5;
@@ -28,9 +28,10 @@
       var game = new Phaser.Game(_.gameProperties.screenWidth, _.gameProperties.screenHeight, 'auto', 'gameDiv');
       game.state.add(_.GameStates.GAME, Kotlin.getCallableRefForConstructor(_.MyGameState));
       game.state.start(_.GameStates.GAME);
+      var z = Phaser.Math.difference(1.0, 2.0);
     },
     MyGameState: Kotlin.createClass(function () {
-      return [_.GameState];
+      return [_.Phaser.GameState];
     }, function $fun(game) {
       $fun.baseInitializer.call(this, game);
       this.game = game;
@@ -40,6 +41,11 @@
       this.key_thrust$delegate = Kotlin.modules['stdlib'].kotlin.lazy_un3fny$(_.MyGameState.key_thrust$f(this));
       this.shipSprite$delegate = Kotlin.modules['stdlib'].kotlin.properties.Delegates.notNull();
     }, /** @lends _.MyGameState.prototype */ {
+      keyboard: {
+        get: function () {
+          return this.game.input.keyboard;
+        }
+      },
       key_left: {
         get: function () {
           return Kotlin.modules['stdlib'].kotlin.getValue_em0fd4$(this.key_left$delegate, this, new Kotlin.PropertyMetadata('key_left'));
@@ -64,7 +70,7 @@
         }
       },
       preload: function () {
-        _.image_z0ajh0$(this.load, [_.Assets.ship, _.Assets.bullet, _.Assets.asteroidLarge, _.Assets.asteroidMedium, _.Assets.asteroidSmall]);
+        _.Phaser.image_alw5g3$(this.load, [_.Assets.ship, _.Assets.bullet, _.Assets.asteroidLarge, _.Assets.asteroidMedium, _.Assets.asteroidSmall]);
       },
       create: function () {
         Kotlin.println('create');
@@ -101,77 +107,79 @@
     }, /** @lends _.MyGameState */ {
       key_left$f: function (this$MyGameState) {
         return function () {
-          return this$MyGameState.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+          return this$MyGameState.keyboard.addKey(Phaser.Keyboard.LEFT);
         };
       },
       key_right$f: function (this$MyGameState) {
         return function () {
-          return this$MyGameState.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+          return this$MyGameState.keyboard.addKey(Phaser.Keyboard.RIGHT);
         };
       },
       key_thrust$f: function (this$MyGameState) {
         return function () {
-          return this$MyGameState.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+          return this$MyGameState.keyboard.addKey(Phaser.Keyboard.UP);
         };
       }
     }),
-    AssertName: Kotlin.createTrait(null),
-    Assert: Kotlin.createClass(null, function (name, url) {
-      this.name = name;
-      this.url = url;
-    }, /** @lends _.Assert.prototype */ {
-      component1: function () {
-        return this.name;
+    Phaser: Kotlin.definePackage(null, /** @lends _.Phaser */ {
+      AssertName: Kotlin.createTrait(null),
+      Assert: Kotlin.createClass(null, function (name, url) {
+        this.name = name;
+        this.url = url;
+      }, /** @lends _.Phaser.Assert.prototype */ {
+        component1: function () {
+          return this.name;
+        },
+        component2: function () {
+          return this.url;
+        },
+        copy_i88sg6$: function (name, url) {
+          return new _.Phaser.Assert_puj7f4$(name === void 0 ? this.name : name, url === void 0 ? this.url : url);
+        },
+        toString: function () {
+          return 'Assert(name=' + Kotlin.toString(this.name) + (', url=' + Kotlin.toString(this.url)) + ')';
+        },
+        hashCode: function () {
+          var result = 0;
+          result = result * 31 + Kotlin.hashCode(this.name) | 0;
+          result = result * 31 + Kotlin.hashCode(this.url) | 0;
+          return result;
+        },
+        equals_za3rmp$: function (other) {
+          return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.name, other.name) && Kotlin.equals(this.url, other.url)))));
+        }
+      }),
+      Assert_puj7f4$: function (name, url, $this) {
+        $this = $this || Object.create(_.Phaser.Assert.prototype);
+        _.Phaser.Assert.call($this, name, url);
+        return $this;
       },
-      component2: function () {
-        return this.url;
+      GameStateType: Kotlin.createTrait(null),
+      GameStateType_61zpoe$: function (name) {
+        return name;
       },
-      copy_65rdel$: function (name, url) {
-        return new _.Assert_puj7f4$(name === void 0 ? this.name : name, url === void 0 ? this.url : url);
-      },
-      toString: function () {
-        return 'Assert(name=' + Kotlin.toString(this.name) + (', url=' + Kotlin.toString(this.url)) + ')';
-      },
-      hashCode: function () {
-        var result = 0;
-        result = result * 31 + Kotlin.hashCode(this.name) | 0;
-        result = result * 31 + Kotlin.hashCode(this.url) | 0;
-        return result;
-      },
-      equals_za3rmp$: function (other) {
-        return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.name, other.name) && Kotlin.equals(this.url, other.url)))));
-      }
-    }),
-    Assert_puj7f4$: function (name, url, $this) {
-      $this = $this || Object.create(_.Assert.prototype);
-      _.Assert.call($this, name, url);
-      return $this;
-    },
-    GameStateType: Kotlin.createTrait(null),
-    GameStateType_61zpoe$: function (name) {
-      return name;
-    },
-    GameState: Kotlin.createClass(null, null, /** @lends _.GameState.prototype */ {
-      preload: function () {
-      },
-      create: function () {
-      },
-      update: function () {
-      },
-      render: function () {
-      }
-    }),
-    image_h6bct2$: function ($receiver, assert) {
-      $receiver.image(assert.name, assert.url);
-    },
-    image_z0ajh0$: function ($receiver, asserts) {
-      var tmp$0, tmp$1, tmp$2;
-      tmp$0 = asserts, tmp$1 = tmp$0.length;
-      for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
-        var assert = tmp$0[tmp$2];
+      GameState: Kotlin.createClass(null, null, /** @lends _.Phaser.GameState.prototype */ {
+        preload: function () {
+        },
+        create: function () {
+        },
+        update: function () {
+        },
+        render: function () {
+        }
+      }),
+      image_we6qu1$: function ($receiver, assert) {
         $receiver.image(assert.name, assert.url);
+      },
+      image_alw5g3$: function ($receiver, asserts) {
+        var tmp$0, tmp$1, tmp$2;
+        tmp$0 = asserts, tmp$1 = tmp$0.length;
+        for (var tmp$2 = 0; tmp$2 !== tmp$1; ++tmp$2) {
+          var element = tmp$0[tmp$2];
+          $receiver.image(element.name, element.url);
+        }
       }
-    }
+    })
   });
   Kotlin.defineModule('example1', _);
   _.main_kand9s$([]);

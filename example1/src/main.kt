@@ -1,10 +1,13 @@
+import Phaser.*
 import kotlin.browser.document
 import kotlin.properties.Delegates
 
 fun main(args: Array<String>) {
-	val game = PhaserGame(gameProperties.screenWidth, gameProperties.screenHeight, "auto", "gameDiv")
+	val game = Game(gameProperties.screenWidth, gameProperties.screenHeight, "auto", "gameDiv")
 	game.state.add(GameStates.GAME, ::MyGameState)
 	game.state.start(GameStates.GAME)
+	val z = PhaserMath.difference(1.0, 2.0)
+
 }
 
 object GameStates {
@@ -33,12 +36,13 @@ object shipProperties {
 	val angularVelocity = 200.0
 }
 
-class MyGameState(val game: PhaserGame) : GameState(game) {
+class MyGameState(val game: Phaser.Game) : GameState(game) {
 	val load = game.load
-	val key_left by lazy { game.input.keyboard.addKey(PhaserKeyboard.LEFT) }
-	val key_right by lazy { game.input.keyboard.addKey(PhaserKeyboard.RIGHT) }
-	val key_thrust by lazy { game.input.keyboard.addKey(PhaserKeyboard.UP) }
-	var shipSprite: PhaserSprite by Delegates.notNull()
+	val keyboard: Phaser.Keyboard get() = game.input.keyboard
+	val key_left by lazy { keyboard.addKey(Phaser.Keyboard.LEFT) }
+	val key_right by lazy { keyboard.addKey(Phaser.Keyboard.RIGHT) }
+	val key_thrust by lazy { keyboard.addKey(Phaser.Keyboard.UP) }
+	var shipSprite: Sprite by Delegates.notNull()
 
 	override fun preload() {
 		load.image(Assets.ship, Assets.bullet, Assets.asteroidLarge, Assets.asteroidMedium, Assets.asteroidSmall)
@@ -59,9 +63,9 @@ class MyGameState(val game: PhaserGame) : GameState(game) {
 		}
 
 		// Physics
-		game.physics.startSystem(PhaserPhysics.ARCADE)
+		game.physics.startSystem(Physics.ARCADE)
 
-		game.physics.enable(shipSprite, PhaserPhysics.ARCADE)
+		game.physics.enable(shipSprite, Physics.ARCADE)
 		shipSprite.body.drag.set(shipProperties.drag)
 		shipSprite.body.maxVelocity.set(shipProperties.maxVelocity)
 	}
