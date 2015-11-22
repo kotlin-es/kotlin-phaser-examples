@@ -42,8 +42,8 @@ import kotlin.reflect.KClass
 	@native val event: Event = noImpl
 	@native val isDown: Boolean = noImpl
 	@native val isUp: Boolean = noImpl
-	@native val onDown: PhaserSignal<Boolean> = noImpl
-	@native val onUp: PhaserSignal<Boolean> = noImpl
+	@native val onDown: Signal<Boolean> = noImpl
+	@native val onUp: Signal<Boolean> = noImpl
 	@native var onHoldCallback: () -> Unit = noImpl
 	@native var onHoldContext: Any = noImpl
 }
@@ -84,11 +84,38 @@ open class GameState(game: Phaser.Game) {
 	@native fun start(state: GameStateType)
 }
 
-@native("Phaser.Loader") class Loader(game: Phaser.Game) {
+@native("Phaser.Cache") class Cache(val game: Phaser.Game) {
+	companion object {
+		@native val BINARY: Int = noImpl
+		@native val BITMAPDATA: Int = noImpl
+		@native val BITMAPFONT: Int = noImpl
+		@native val CANVAS: Int = noImpl
+		@native val IMAGE: Int = noImpl
+		@native val JSON: Int = noImpl
+		@native val PHYSICS: Int = noImpl
+		@native val RENDER_TEXTURE: Int = noImpl
+		@native val SHADER: Int = noImpl
+		@native val SOUND: Int = noImpl
+		@native val TEXT: Int = noImpl
+		@native val TEXTURE: Int = noImpl
+		@native val TILEMAP: Int = noImpl
+		@native val VIDEO: Int = noImpl
+		@native val XML: Int = noImpl
+	}
+
+	@native var autoResolveURL: Boolean = noImpl
+	@native var onSoundUnlock: Signal<Any> = noImpl
+
+	fun addBinary(key: String, binaryData: Any): Unit = noImpl
+	// ...
+	// ...
+}
+
+@native("Phaser.Loader") class Loader(val game: Phaser.Game) {
 	@native fun image(name: AssertName, url: String)
-	val hasLoaded: Boolean = noImpl
-	val isLoading: Boolean = noImpl
-	val onFileComplete: PhaserSignal<Any> = noImpl
+	@native val hasLoaded: Boolean = noImpl
+	@native val isLoading: Boolean = noImpl
+	@native val onFileComplete: Signal<Any> = noImpl
 }
 
 @native("Phaser.World") class World {
@@ -323,20 +350,20 @@ interface DirectionObj {
 
 }
 
-@native("Phaser.SignalBinding") class PhaserSignalBinding<T>() {
+@native("Phaser.SignalBinding") class SignalBinding<T>() {
 	@native fun detach(): ((T) -> Unit)? = noImpl
 	@native fun execute(arg: T): Any = noImpl
 	@native fun getListener(): (T) -> Unit = noImpl
-	@native fun getSignal(): PhaserSignal<T> = noImpl
+	@native fun getSignal(): Signal<T> = noImpl
 	@native fun isBound(): Boolean = noImpl
 	@native fun isOnce(): Boolean = noImpl
 }
 
-@native("Phaser.Signal") class PhaserSignal<T>() {
+@native("Phaser.Signal") class Signal<T>() {
 	@native var active: Boolean = noImpl
 	@native var memorize: Boolean = noImpl
-	@native fun add(listener: (T) -> Unit, listenerContext: Any, priority: Int, args: Array<Any>): PhaserSignalBinding<T> = noImpl
-	@native fun addOnce(listener: (T) -> Unit, listenerContext: Any, priority: Int, args: Array<Any>): PhaserSignalBinding<T> = noImpl
+	@native fun add(listener: (T) -> Unit, listenerContext: Any, priority: Int, args: Array<Any>): SignalBinding<T> = noImpl
+	@native fun addOnce(listener: (T) -> Unit, listenerContext: Any, priority: Int, args: Array<Any>): SignalBinding<T> = noImpl
 	@native fun remove(listener: (T) -> Unit, context: Any): (T) -> Unit = noImpl
 	@native fun removeAll(context: Any): (T) -> Unit = noImpl
 	@native fun dispatch(value: T): Unit = noImpl
