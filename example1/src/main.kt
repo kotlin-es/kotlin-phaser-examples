@@ -1,13 +1,20 @@
 import Phaser.*
-import kotlin.browser.document
 import kotlin.properties.Delegates
 
 fun main(args: Array<String>) {
+	async {
+		for (n in 0 until 10) {
+			println("HEY!$n")
+			await(sleepAsync(1000))
+		}
+		println("DONE!")
+	}.then {
+		println("DONE2!")
+	}
 	val game = Game(gameProperties.screenWidth, gameProperties.screenHeight, "auto", "gameDiv")
 	game.state.add(GameStates.GAME, ::MyGameState)
 	game.state.start(GameStates.GAME)
 	val z = PhaserMath.difference(1.0, 2.0)
-
 }
 
 object GameStates {
@@ -102,3 +109,4 @@ class MyGameState(val game: Phaser.Game) : GameState(game) {
 		if (sprite.y > game.height) sprite.y -= game.height
 	}
 }
+
